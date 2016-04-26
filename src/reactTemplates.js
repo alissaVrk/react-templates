@@ -33,11 +33,13 @@ var propsMergeFunction = [
     ''
 ].join('\n');
 
+var myTempUglyCreateElement = 'window.__compsFactory.createElement';
+
 var classSetTemplate = _.template('_.keys(_.pick(<%= classSet %>, _.identity)).join(" ")');
 var simpleTagTemplate = _.template('<%= name %>(<%= props %><%= children %>)');
 var tagTemplate = _.template('<%= name %>.apply(this, [<%= props %><%= children %>])');
-var simpleTagTemplateCreateElement = _.template('React.createElement(<%= name %>,<%= props %><%= children %>)');
-var tagTemplateCreateElement = _.template('React.createElement.apply(this, [<%= name %>,<%= props %><%= children %>])');
+var simpleTagTemplateCreateElement = _.template(myTempUglyCreateElement + '(<%= name %>,<%= props %><%= children %>)');
+var tagTemplateCreateElement = _.template(myTempUglyCreateElement + '.apply(this, [<%= name %>,<%= props %><%= children %>])');
 var commentTemplate = _.template(' /* <%= data %> */ ');
 
 var repeatAttr = 'rt-repeat';
