@@ -20,6 +20,9 @@ var ifTemplate = _.template('((<%= condition %>)?(<%= body %>):null)');
 var propsTemplateSimple = _.template('_.assign({}, <%= generatedProps %>, <%= rtProps %>)');
 var propsTemplate = _.template('mergeProps( <%= generatedProps %>, <%= rtProps %>)');
 
+//TODO: Alissa - this should be a passed option at least
+var createElementFunction = 'this.context.compsFactory.createElement';
+
 const propsMergeFunction = `function mergeProps(inline,external) {
     var res = _.assign({},inline,external)
     if (inline.hasOwnProperty('style')) {
@@ -36,9 +39,9 @@ var classSetTemplate = _.template('_(<%= classSet %>).transform(function(res, va
 
 function getTagTemplateString(simpleTagTemplate, shouldCreateElement) {
     if (simpleTagTemplate) {
-        return shouldCreateElement ? 'React.createElement(<%= name %>,<%= props %><%= children %>)' : '<%= name %>(<%= props %><%= children %>)';
+        return shouldCreateElement ?  createElementFunction + '(<%= name %>,<%= props %><%= children %>)' : '<%= name %>(<%= props %><%= children %>)';
     }
-    return shouldCreateElement ? 'React.createElement.apply(this, [<%= name %>,<%= props %><%= children %>])' : '<%= name %>.apply(this, [<%= props %><%= children %>])';
+    return shouldCreateElement ? createElementFunction + '.apply(this, [<%= name %>,<%= props %><%= children %>])' : '<%= name %>.apply(this, [<%= props %><%= children %>])';
 }
 
 
@@ -558,7 +561,7 @@ function convertRT(html, reportContext, options) {
     options = getOptions(options);
 
     var context = defaultContext(html, options, reportContext);
-    var body = parseAndConvertHtmlToReact(html, context);
+    var body = parseAndConvertHtmlToReact(html, context, options);
 
     var requirePaths = _(context.defines)
         .keys()
